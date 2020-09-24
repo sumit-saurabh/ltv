@@ -21,11 +21,11 @@ import os
 app = Flask(__name__, template_folder='./')
 api = Api(app)
 times_to_calculate_the_expectation_for = 15  # day
-pickle_object_name = "bounce.pkl"
+pickle_object_name = "trained_data.pkl"
 segment_count = 5
 count = 0
 project_id = "fox-hackathon-0728-019"
-key_file_path = "fox-hackathon-creds.json"
+key_file_path = "creds.json"
 destination_table = 'foxhackathon_adobe_ltv.ltv_prediction_output_data'
 chunk_size = 10000
 customer_id_col = 'customer_id'
@@ -87,8 +87,8 @@ def load_and_predict_model():
 def load_ml_models():
 	global bgf
 	global ggf
-	bgf_pickle_object_name = "bgf_bounce.pkl"
-	ggf_pickle_object_name = "ggf_bounce.pkl"
+	bgf_pickle_object_name = "bgf_trained_data.pkl"
+	ggf_pickle_object_name = "ggf_trained_data.pkl"
 	bgf = BetaGeoFitter()
 	bgf.load_model(bgf_pickle_object_name)
 	print (bgf)

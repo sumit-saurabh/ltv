@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Galaxy</title>
+    <title>Buynocular</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -73,7 +73,7 @@
         }
         
         .ProgressBar-step:after {
-            background-color: #00637c;
+            background-color: #FF4C5A;
             width: 0%;
         }
         
@@ -97,13 +97,13 @@
         }
         
         .is-current .ProgressBar-icon {
-            fill: #00637c;
-            background-color: #00637c;
+            fill: #FF4C5A;
+            background-color: #FF4C5A;
         }
         
         .is-complete .ProgressBar-icon {
             fill: #dbf1ff;
-            background-color: #00637c;
+            background-color: #FF4C5A;
         }
         
         .ProgressBar-stepLabel {
@@ -118,7 +118,8 @@
         
         .is-current > .ProgressBar-stepLabel,
         .is-complete > .ProgressBar-stepLabel {
-            color: #00637c;
+            color: #FF4C5A;
+            font-weight: 500;
         }
         
         .wrapper {
@@ -134,18 +135,24 @@
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script type='text/javascript' src='https://eu-west-1a.online.tableau.com/javascripts/api/viz_v1.js'></script>
-
+    <link type="image/x-icon" rel="shortcut icon" href="https://bounceshare.com/web/image/website/1/favicon?unique=5c98fac">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-    <img src="https://s3-us-west-2.amazonaws.com/lcs-testing/21CF.png" class="img-rounded" style="height: 24px;width:auto;right: 0;position: fixed;margin: 31px;">
+    <img src="https://blog.bounceshare.com/wp-content/uploads/2019/05/cropped-logo-app-3.png" class="img-rounded" style="height:84px;width:auto;right: 0;position: fixed;margin: 31px;">
     <div class="jumbotron vertical-center" style="background: white;">
 
         <div class="container" style="margin-top: 20px;">
             <div class="row">
-                <div class="h-100 row align-items-center" style="margin-top: -16px;">
-                    <img src="https://s3-us-west-2.amazonaws.com/lcs-testing/galaxy_icon.png" class="img-responsive img-rounded" alt="Galaxy" style="width: 136px;height:auto;margin: auto;margin-bottom: 18px;margin-top: -10px;">
-
+                <div class="h-100 row align-items-center">
+                    <img src="https://www.flaticon.com/svg/static/icons/svg/432/432720.svg" class="img-responsive img-rounded" alt="Buynocular" style="width:200px;height:auto;margin: auto">
+                    <center style="
+                        margin-top: -22px;
+                        color: #357ebd;
+                        font-size: 42px;
+                        font-family: fantasy;">
+                        <span>Buynocular</span>
+                    </center>
                 </div>
-                <div class="h-100 row align-items-center" style="margin-bottom: 32px;">
+                <div class="h-100 row align-items-center" style="margin-bottom: 32px;margin-top: 32px;">
                     <ol class="ProgressBar">
                         <li class="ProgressBar-step">
                             <svg class="ProgressBar-icon">
@@ -335,7 +342,7 @@
     // });
 
     $('#upload').on('click', function() {
-        debugger;
+        //debugger;
         var file_data = $('#file').prop('files')[0];
         var form_data = new FormData();
         form_data.append('file', file_data);
@@ -363,7 +370,7 @@
     });
 
     function show_training_model_view() {
-        debugger;
+        //debugger;
         $("#upload_file").hide();
         $("#training_model").show();
     }
