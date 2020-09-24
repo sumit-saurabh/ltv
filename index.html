@@ -369,14 +369,14 @@
     }
 
     function on_successful_upload(file_name) {
-        debugger
+        //debugger
         advance_progress_bar();
         show_training_model_view();
         train_model(file_name);
     }
 
     function train_model(file_name) {
-        debugger;
+        //debugger;
         $.ajax({
             url: 'http://localhost:5000/train_model', // point to server-side PHP script 
             dataType: 'text', // what to expect back from the PHP script, if anything
@@ -400,7 +400,7 @@
     }
 
     function on_successful_training() {
-        debugger;
+        //debugger;
         advance_progress_bar();
         $("#upload_file").hide();
         $("#training_model").hide();
@@ -408,7 +408,7 @@
     }
 
     function show_prediction_data_option_form() {
-        debugger;
+        //debugger;
         $("#upload_file").hide();
         $("#training_model").hide();
         $("#prediction_data_option").show();
@@ -428,6 +428,11 @@
             }
         }
     });
+
+    $('#upload_segmentation_data').on('click', function() {
+        alert("sumit")
+    });
+
 
     function on_successful_prediction() {
         //show_segmentation_progress();
@@ -465,7 +470,7 @@
     }
 
     function segment_data() {
-        debugger;
+        //debugger;
         $.ajax({
             url: 'http://localhost:5000/segment', // point to server-side PHP script 
             dataType: 'text', // what to expect back from the PHP script, if anything

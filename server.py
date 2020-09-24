@@ -20,7 +20,7 @@ import os
 # https://blog.apcelent.com/create-rest-api-using-flask.html
 app = Flask(__name__, template_folder='./')
 api = Api(app)
-times_to_calculate_the_expectation_for = 4  # weeks
+times_to_calculate_the_expectation_for = 15  # day
 pickle_object_name = "bounce.pkl"
 segment_count = 5
 count = 0
@@ -114,7 +114,7 @@ def sanitize_data():
 def load_and_train_model():
 	global input_file
 	req_data = request.get_json(force=True)
-	input_file = req_data['fileName']
+	input_file = secure_filename(req_data['fileName'])
 	print ("Input file: " + input_file)
 	load_input_data(input_file)
 	train_model()
@@ -127,10 +127,11 @@ def load_input_data(input_file):
 	global customer_id_col
 	global datetime_col
 	global monetary_value_col
-	observation_period_end = max(pd.read_csv(input_file)[datetime_col])
-	print ("observation_period_end: " + observation_period_end)
+	file_path = upload_dir + "/" + input_file
 	print ("Loading Input Event Level Data...")
-	input_dataframe = pd.read_csv(upload_dir + "/" + input_file)
+	input_dataframe = pd.read_csv(file_path)
+	observation_period_end = max(input_dataframe[datetime_col])
+	print ("observation_period_end: " + observation_period_end)
 	print ("Input data loaded successfully.")
 	print ("Input data:")
 	print(input_dataframe.head())
@@ -301,6 +302,7 @@ def upload_file_handler():
 	global upload_dir
 	if request.method == 'POST':
 		f = request.files['file']
+		print ("++++++++++++++++++++++++++++ " + f.filename)
 		f.save(os.path.join(upload_dir, secure_filename(f.filename)))
 		#f.save(secure_filename(f.filename))
 		return f.filename
