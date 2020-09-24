@@ -33,7 +33,7 @@ datetime_col = 'date'
 monetary_value_col = 'transactional_value'
 upload_dir = 'data'
 input_file = ''
-observation_period_end = max(pd.read_csv(input_file)[datetime_col])
+
 
 @app.after_request
 def after_request(response):
@@ -124,10 +124,11 @@ def load_and_train_model():
 	
 def load_input_data(input_file):
 	global training_dataframe
-	global observation_period_end
 	global customer_id_col
 	global datetime_col
 	global monetary_value_col
+	observation_period_end = max(pd.read_csv(input_file)[datetime_col])
+	print ("observation_period_end: " + observation_period_end)
 	print ("Loading Input Event Level Data...")
 	input_dataframe = pd.read_csv(upload_dir + "/" + input_file)
 	print ("Input data loaded successfully.")
