@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from flask import Flask, render_template, request, redirect, Response
+from flask import Flask, render_template, request, redirect, Response, jsonify
 #from google.cloud import bigquery
 #import google.auth
 from pandas.io import gbq
@@ -15,6 +15,7 @@ import time
 from werkzeug.utils import secure_filename
 from flask_restful import reqparse, abort, Api, Resource
 import numpy as np
+import os
 
 # https://blog.apcelent.com/create-rest-api-using-flask.html
 app = Flask(__name__, template_folder='./')
@@ -31,7 +32,8 @@ chunk_size = 10000
 customer_id_col = 'customer_id'
 datetime_col = 'date'
 monetary_value_col = 'transactional_value'
-input_file = 'query_result_2020-09-24T08_11_25.029038Z.csv'
+upload_dir = 'data'
+input_file = ''
 
 @app.after_request
 def after_request(response):
@@ -111,6 +113,9 @@ def sanitize_data():
 @app.route('/train_model', methods = ['GET', 'POST'])
 def load_and_train_model():
 	global input_file
+	req_data = request.get_json(force=True)
+	input_file = req_data['fileName']
+	print ("Input file: " + input_file)
 	load_input_data(input_file)
 	train_model()
 	global count
@@ -124,7 +129,7 @@ def load_input_data(input_file):
 	global datetime_col
 	global monetary_value_col
 	print ("Loading Input Event Level Data...")
-	input_dataframe = pd.read_csv(input_file)
+	input_dataframe = pd.read_csv(upload_dir + "/" + input_file)
 	print ("Input data loaded successfully.")
 	print ("Input data:")
 	print(input_dataframe.head())
@@ -156,7 +161,7 @@ def fit_data_in_gamma_gamma_model():
 	# Using GammaGammaFitter (ggf)
 	global returning_customers_summary
 	print ("Training: Fitting data in Gamma-Gamma Model")
-	ggf = GammaGammaFitter(penalizer_coef = 0.0)  # 0.001 to 0.1 are effective (L2 regularization)
+	ggf = GammaGammaFitter(penalizer_coef = 0.1)  # 0.001 to 0.1 are effective (L2 regularization)
 	ggf.fit(returning_customers_summary['frequency'],
 					returning_customers_summary['monetary_value'])
 	print (ggf)
@@ -167,7 +172,7 @@ def fit_data_in_bg_nbd_model():
 	# Frequency Model: Using BetaGeoFitter (bgf)
 	global returning_customers_summary
 	print ("Training: Fitting data in BG/NBD Model")
-	bgf = BetaGeoFitter(penalizer_coef = 0.01)  # 0.001 to 0.1 are effective (L2 regularization)
+	bgf = BetaGeoFitter(penalizer_coef = 0.1)  # 0.001 to 0.1 are effective (L2 regularization)
 	bgf.fit(returning_customers_summary['frequency'], returning_customers_summary['recency'], returning_customers_summary['T'])
 	print (bgf)
 	return bgf
@@ -176,7 +181,7 @@ def fit_data_in_pareto_nbd_model():
 	# Using ParetoNBDFitter (pnbd)
 	global returning_customers_summary
 	print ("Training: Fitting data in ParetoNBDFitter Model")
-	pnbd = ParetoNBDFitter(penalizer_coef=0.0) # 0.001 to 0.1 are effective (L2 regularization)
+	pnbd = ParetoNBDFitter(penalizer_coef=0.1) # 0.001 to 0.1 are effective (L2 regularization)
 	pnbd.fit(returning_customers_summary['frequency'], returning_customers_summary['recency'], returning_customers_summary['T'])
 	print (pnbd)
 	return pnbd
@@ -281,9 +286,11 @@ def upload_file():
 	
 @app.route('/upload', methods = ['GET', 'POST'])
 def upload_file_handler():
+	global upload_dir
 	if request.method == 'POST':
 		f = request.files['file']
-		f.save(secure_filename(f.filename))
+		f.save(os.path.join(upload_dir, secure_filename(f.filename)))
+		#f.save(secure_filename(f.filename))
 		return f.filename
 
 def verify_project_google():

@@ -349,7 +349,7 @@
             data: form_data,
             type: 'post',
             success: function(php_script_response) {
-                on_successful_upload();
+                on_successful_upload(file_data.name);
             },
             error: function(jqXHR, status, err) {
                 alert("Error while uploading data. Please try again.");
@@ -368,21 +368,22 @@
         $("#training_model").show();
     }
 
-    function on_successful_upload() {
+    function on_successful_upload(file_name) {
+        debugger
         advance_progress_bar();
         show_training_model_view();
-        train_model();
+        train_model(file_name);
     }
 
-    function train_model() {
+    function train_model(file_name) {
         debugger;
         $.ajax({
             url: 'http://localhost:5000/train_model', // point to server-side PHP script 
             dataType: 'text', // what to expect back from the PHP script, if anything
             cache: false,
-            contentType: false,
+            contentType: 'application/json',
             processData: false,
-            data: "",
+            data: JSON.stringify( { "fileName": file_name } ),
             type: 'post',
             success: function(php_script_response) {
                 on_successful_training();
