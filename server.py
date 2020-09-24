@@ -140,6 +140,7 @@ def load_input_data(input_file):
 		input_dataframe, 
 		customer_id_col,
 		datetime_col,
+		monetary_value_col,
 		freq = 'D',
 		observation_period_end = observation_period_end).reset_index()
 	print('Output from summary_data_from_transaction_data')
