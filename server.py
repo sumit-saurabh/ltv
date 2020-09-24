@@ -20,8 +20,7 @@ import os
 # https://blog.apcelent.com/create-rest-api-using-flask.html
 app = Flask(__name__, template_folder='./')
 api = Api(app)
-times_to_calculate_the_expectation_for = 30  # weeks
-observation_period_end = '2019-12-31'
+times_to_calculate_the_expectation_for = 4  # weeks
 pickle_object_name = "bounce.pkl"
 segment_count = 5
 count = 0
@@ -34,6 +33,7 @@ datetime_col = 'date'
 monetary_value_col = 'transactional_value'
 upload_dir = 'data'
 input_file = ''
+observation_period_end = max(pd.read_csv(input_file)[datetime_col])
 
 @app.after_request
 def after_request(response):
@@ -138,9 +138,20 @@ def load_input_data(input_file):
 		input_dataframe, 
 		customer_id_col,
 		datetime_col,
-		monetary_value_col,
 		freq = 'D',
-		observation_period_end = observation_period_end)
+		observation_period_end = observation_period_end).reset_index()
+	print('Output from summary_data_from_transaction_data')
+	print(training_dataframe.head())
+	agg_file = input_dataframe.groupby(customer_id_col).agg({datetime_col:'count',monetary_value_col:'sum'}).reset_index()
+	agg_file['temp'] = agg_file[monetary_value_col]/agg_file[datetime_col]
+	agg_file.drop([monetary_value_col,datetime_col],axis=1,inplace=True)
+	agg_file.rename(columns = {'temp':'monetary_value'},inplace=True)
+	print('agg_file - ')
+	print(agg_file.head())
+	training_dataframe = pd.merge(training_dataframe,agg_file,on=customer_id_col,how='left')
+	training_dataframe.fillna(0,inplace=True)
+	training_dataframe.set_index(customer_id_col,inplace=True)
+	training_dataframe.to_csv('training_dataframe.csv')
 	print ("Successfully transformed the data.")
 	print ("User level data:")
 	print(training_dataframe.head())
