@@ -46,6 +46,16 @@ def after_request(response):
 def load_and_predict_model():
 	global count
 	global input_file
+
+	if request.args.get('file_name'):
+		print ("Received Input Predition File")
+		prediction_file = secure_filename(request.args.get('file_name'))
+	else:
+		print ("NOT Received Input Predition File")
+		prediction_file = input_file
+
+	print("prediction_file: " + prediction_file)
+
 	if count < 2:
 		load_ml_models()
 		load_input_data(input_file)
@@ -302,9 +312,8 @@ def upload_file_handler():
 	global upload_dir
 	if request.method == 'POST':
 		f = request.files['file']
-		print ("++++++++++++++++++++++++++++ " + f.filename)
+		print ("Uploaded file:  " + f.filename)
 		f.save(os.path.join(upload_dir, secure_filename(f.filename)))
-		#f.save(secure_filename(f.filename))
 		return f.filename
 
 def verify_project_google():

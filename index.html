@@ -194,7 +194,7 @@
                             <div class="input-group">
                                 <label class="input-group-btn">
                                     <span class="btn btn-primary">
-                                Browse&hellip; <input type="file" style="display: none;" name = "file" id="file">
+                                Browse&hellip; <input type="file" style="display: none;" name = "file" id="training_file">
                             </span>
                                 </label>
                                 <input type="text" class="form-control" readonly>
@@ -219,7 +219,7 @@
                             <div class="input-group">
                                 <label class="input-group-btn">
                                     <span class="btn btn-primary">
-                                    Browse&hellip; <input type="file" style="display: none;" name = "file" id="file">
+                                    Browse&hellip; <input type="file" style="display: none;" name = "file" id="prediction_file">
                                 </span>
                                 </label>
                                 <input type="text" class="form-control" readonly>
@@ -343,7 +343,7 @@
 
     $('#upload').on('click', function() {
         //debugger;
-        var file_data = $('#file').prop('files')[0];
+        var file_data = $('#training_file').prop('files')[0];
         var form_data = new FormData();
         form_data.append('file', file_data);
 
@@ -422,9 +422,13 @@
     }
 
     $('#skip').on('click', function() {
+        observe_prediction_progress(null)
+    });
+
+    function observe_prediction_progress(file_name) {
         $("#prediction_data_option").hide();
         $("#predicting_model").show();
-        var source = new EventSource("/predict");
+        var source = new EventSource("/predict?file_name="+file_name);
         source.onmessage = function(event) {
             if (event.data.indexOf("prediction_completed") > -1) {
                 on_successful_prediction();
@@ -434,12 +438,39 @@
                 on_successful_upload_to_bq();
             }
         }
-    });
+    }
 
     $('#upload_segmentation_data').on('click', function() {
-        alert("sumit")
+        //debugger;
+        var file_data = $('#prediction_file').prop('files')[0];
+        var form_data = new FormData();
+        form_data.append('file', file_data);
+
+        $.ajax({
+            url: 'http://localhost:5000/upload', // point to server-side PHP script 
+            dataType: 'text', // what to expect back from the PHP script, if anything
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: form_data,
+            type: 'post',
+            success: function(php_script_response) {
+                on_successful_prediction_data_upload(file_data.name);
+            },
+            error: function(jqXHR, status, err) {
+                alert("Error while uploading data. Please try again.");
+            },
+            complete: function(jqXHR, status) {
+
+            }
+        }).done(function(msg) {
+            console.log(msg);
+        });
     });
 
+    function on_successful_prediction_data_upload(file_name) {
+        observe_prediction_progress(file_name)
+    }
 
     function on_successful_prediction() {
         //show_segmentation_progress();
