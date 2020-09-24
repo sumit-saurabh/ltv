@@ -12,7 +12,7 @@ from lifetimes.plotting import plot_frequency_recency_matrix
 import pandas as pd
 from pandas import DataFrame
 import time
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from flask_restful import reqparse, abort, Api, Resource
 import numpy as np
 
