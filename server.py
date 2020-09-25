@@ -47,7 +47,7 @@ def load_and_predict_model():
 	global count
 	global input_file
 
-	if request.args.get('file_name'):
+	if request.args.get('file_name') != "null":
 		print ("Received Input Predition File")
 		prediction_file = secure_filename(request.args.get('file_name'))
 	else:
@@ -58,7 +58,7 @@ def load_and_predict_model():
 
 	if count < 2:
 		load_ml_models()
-		load_input_data(input_file)
+		load_input_data(prediction_file)
 		def generate():
 			global count
 			if count < 3:
@@ -79,20 +79,20 @@ def load_and_predict_model():
 		return Response(generate(), mimetype="text/event-stream")
 	return "Done"
 
-# def store_dataframe_to_big_query():
-#         print ("Method init: store_dataframe_to_big_query")
-#         global returning_customers_summary
-#         start_time = time.time()
-#         print ("Storing dataframe: start time = " + str(start_time))
-#         returning_customers_summary.to_gbq(destination_table,
-#                                          project_id,
-#                                          chunksize=chunk_size,
-#                                          if_exists='replace',
-#                                          verbose=True
-#                                          )
-#         end_time = time.time()
-#         print ("Storage time: " + str(end_time - start_time))
-#         print ("Saved the output dataframe to bigquery.")
+def store_dataframe_to_big_query():
+        print ("Method init: store_dataframe_to_big_query")
+        # global returning_customers_summary
+        # start_time = time.time()
+        # print ("Storing dataframe: start time = " + str(start_time))
+        # returning_customers_summary.to_gbq(destination_table,
+        #                                  project_id,
+        #                                  chunksize=chunk_size,
+        #                                  if_exists='replace',
+        #                                  verbose=True
+        #                                  )
+        # end_time = time.time()
+        # print ("Storage time: " + str(end_time - start_time))
+        print ("Saved the output dataframe to bigquery.")
         
 def load_ml_models():
 	global bgf
@@ -330,7 +330,7 @@ def verify_project_google():
 	yield "data:" + str("segmentation_completed") + "\n\n"
 	count = count+1
 	print ("Uploading data to BigQuery")
-	#store_dataframe_to_big_query()
+	store_dataframe_to_big_query()
 	yield "data:" + str("data_uploaded") + "\n\n"
 	count = count+1
 
